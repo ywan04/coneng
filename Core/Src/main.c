@@ -109,12 +109,13 @@ int main(void)
 	  		HAL_Delay(200);
   			HAL_GPIO_WritePin(LED_GPIO_Port, LED_Pin, GPIO_PIN_SET);
 
-	  		for (uint8_t i = 0; i < 200; ++i) {
+	  		for (uint32_t i = 0; i < 256; ++i) {
 	  			HAL_GPIO_WritePin(STEP_GPIO_Port, STEP_Pin, GPIO_PIN_SET);
 	  			HAL_Delay(1);
 	  			HAL_GPIO_WritePin(STEP_GPIO_Port, STEP_Pin, GPIO_PIN_RESET);
 	  			HAL_Delay(1);
 	  		}
+	  		HAL_GPIO_TogglePin(DIR_GPIO_Port, DIR_Pin);
 	  	}
 	  }
 
