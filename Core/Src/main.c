@@ -22,7 +22,7 @@
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 #include "CANSPI.h"
-
+#include "a4988.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -71,7 +71,7 @@ static void MX_SPI1_Init(void);
 int main(void)
 {
   /* USER CODE BEGIN 1 */
-
+  a4988_t driver;
   /* USER CODE END 1 */
 
   /* MCU Configuration--------------------------------------------------------*/
@@ -96,11 +96,16 @@ int main(void)
   MX_SPI1_Init();
   /* USER CODE BEGIN 2 */
   CANSPI_Initialize();
-
+  a4988_init(&driver, DIR_GPIO_Port, DIR_Pin,
+		  	  	  	  STEP_GPIO_Port, STEP_Pin,
+					  MS1_GPIO_Port, MS1_Pin,
+					  MS2_GPIO_Port, MS2_Pin,
+					  MS3_GPIO_Port, MS3_Pin);
   /* USER CODE END 2 */
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
+  a4988_set_delay(&driver, 1);
   while (1)
   {
 	  if(CANSPI_Receive(&rxMessage)) {
@@ -110,12 +115,9 @@ int main(void)
   			HAL_GPIO_WritePin(LED_GPIO_Port, LED_Pin, GPIO_PIN_SET);
 
 	  		for (uint32_t i = 0; i < 256; ++i) {
-	  			HAL_GPIO_WritePin(STEP_GPIO_Port, STEP_Pin, GPIO_PIN_SET);
-	  			HAL_Delay(1);
-	  			HAL_GPIO_WritePin(STEP_GPIO_Port, STEP_Pin, GPIO_PIN_RESET);
-	  			HAL_Delay(1);
+	  			a4988_do_step(&driver);
 	  		}
-	  		HAL_GPIO_TogglePin(DIR_GPIO_Port, DIR_Pin);
+	  		a4988_toggle_dir(&driver);
 	  	}
 	  }
 
@@ -256,7 +258,8 @@ static void MX_GPIO_Init(void)
   HAL_GPIO_WritePin(LED_GPIO_Port, LED_Pin, GPIO_PIN_SET);
 
   /*Configure GPIO pin Output Level */
-  HAL_GPIO_WritePin(GPIOA, STEP_Pin|DIR_Pin, GPIO_PIN_RESET);
+  HAL_GPIO_WritePin(GPIOA, MS1_Pin|MS2_Pin|MS3_Pin|STEP_Pin
+                          |DIR_Pin, GPIO_PIN_RESET);
 
   /*Configure GPIO pin Output Level */
   HAL_GPIO_WritePin(CAN_CS_GPIO_Port, CAN_CS_Pin, GPIO_PIN_RESET);
@@ -268,8 +271,10 @@ static void MX_GPIO_Init(void)
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
   HAL_GPIO_Init(LED_GPIO_Port, &GPIO_InitStruct);
 
-  /*Configure GPIO pins : STEP_Pin DIR_Pin */
-  GPIO_InitStruct.Pin = STEP_Pin|DIR_Pin;
+  /*Configure GPIO pins : MS1_Pin MS2_Pin MS3_Pin STEP_Pin
+                           DIR_Pin */
+  GPIO_InitStruct.Pin = MS1_Pin|MS2_Pin|MS3_Pin|STEP_Pin
+                          |DIR_Pin;
   GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
