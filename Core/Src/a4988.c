@@ -39,6 +39,14 @@ void a4988_do_step(a4988_t *driver)
 	HAL_Delay(driver->delay);
 }
 
+void a4988_move(a4988_t *driver, uint32_t steps)
+{
+	while (steps--) {
+		a4988_do_step(driver);
+	}
+}
+
+
 void a4988_set_dir(a4988_t *driver, uint8_t dir)
 {
 	HAL_GPIO_WritePin(driver->Dir_GPIO_Port, driver->Dir_Pin, dir);

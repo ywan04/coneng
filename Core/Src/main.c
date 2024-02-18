@@ -114,9 +114,7 @@ int main(void)
 	  		HAL_Delay(200);
   			HAL_GPIO_WritePin(LED_GPIO_Port, LED_Pin, GPIO_PIN_SET);
 
-	  		for (uint32_t i = 0; i < 256; ++i) {
-	  			a4988_do_step(&driver);
-	  		}
+	  		a4988_move(&driver, 256);
 	  		a4988_toggle_dir(&driver);
 	  	}
 	  }

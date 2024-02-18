@@ -33,6 +33,7 @@ void a4988_init(a4988_t *driver, GPIO_TypeDef *dir_port, uint16_t dir_pin,
 								 GPIO_TypeDef *ms2_port, uint16_t ms2_pin,
 								 GPIO_TypeDef *ms3_port, uint16_t ms3_pin);
 void a4988_do_step(a4988_t *driver);
+void a4988_move(a4988_t *driver, uint32_t steps);
 void a4988_set_dir(a4988_t *driver, uint8_t dir);
 void a4988_toggle_dir(a4988_t *driver);
 void a4988_set_step_size(a4988_t *driver, uint8_t divider);
